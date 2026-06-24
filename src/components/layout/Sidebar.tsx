@@ -9,16 +9,23 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { navigationItems } from "../../shared/navigation";
+import { navigationItems, type PageId } from "../../shared/navigation";
 
 export const drawerWidth = 260;
 
 type SidebarProps = {
   mobileOpen: boolean;
   onClose: () => void;
+  onNavigate: (pageId: PageId) => void;
+  selectedPage: PageId;
 };
 
-function SidebarContent() {
+type SidebarContentProps = {
+  onNavigate: (pageId: PageId) => void;
+  selectedPage: PageId;
+};
+
+function SidebarContent({ onNavigate, selectedPage }: SidebarContentProps) {
   return (
     <Box
       sx={{
@@ -37,13 +44,14 @@ function SidebarContent() {
       </Box>
 
       <List disablePadding>
-        {navigationItems.map((item, index) => {
+        {navigationItems.map((item) => {
           const Icon = item.icon;
-          const selected = index === 0;
+          const selected = item.id === selectedPage;
 
           return (
             <ListItem disablePadding key={item.label}>
               <ListItemButton
+                onClick={() => onNavigate(item.id)}
                 selected={selected}
                 sx={{
                   "&.Mui-selected": {
@@ -80,7 +88,7 @@ function SidebarContent() {
   );
 }
 
-export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
+export function Sidebar({ mobileOpen, onClose, onNavigate, selectedPage }: SidebarProps) {
   return (
     <Box component="nav" sx={{ flexShrink: { md: 0 }, width: { md: drawerWidth } }}>
       <Drawer
@@ -97,7 +105,7 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
         }}
         variant="temporary"
       >
-        <SidebarContent />
+        <SidebarContent onNavigate={onNavigate} selectedPage={selectedPage} />
       </Drawer>
 
       <Drawer
@@ -112,7 +120,7 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
         }}
         variant="permanent"
       >
-        <SidebarContent />
+        <SidebarContent onNavigate={onNavigate} selectedPage={selectedPage} />
       </Drawer>
     </Box>
   );

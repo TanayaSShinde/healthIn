@@ -2,18 +2,31 @@ import { type ReactNode, useState } from "react";
 import { Box, Container, Toolbar } from "@mui/material";
 import { Sidebar, drawerWidth } from "./Sidebar";
 import { TopNavbar } from "./TopNavbar";
+import type { PageId } from "../../shared/navigation";
 
 type AppShellProps = {
   children: ReactNode;
+  onNavigate: (pageId: PageId) => void;
+  selectedPage: PageId;
 };
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, onNavigate, selectedPage }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleNavigate = (pageId: PageId) => {
+    onNavigate(pageId);
+    setMobileOpen(false);
+  };
 
   return (
     <Box sx={{ bgcolor: "background.default", display: "flex", minHeight: "100vh" }}>
       <TopNavbar onMenuClick={() => setMobileOpen(true)} />
-      <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <Sidebar
+        mobileOpen={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        onNavigate={handleNavigate}
+        selectedPage={selectedPage}
+      />
 
       <Box
         component="main"
