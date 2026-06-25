@@ -67,7 +67,7 @@ export function TopNavbar({ onMenuClick }: TopNavbarProps) {
               lineHeight: 1,
             }}
           >
-            Healthin
+            HealthIn
           </Typography>
         </Stack>
 

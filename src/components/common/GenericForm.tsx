@@ -220,9 +220,9 @@ export function GenericForm<TValues extends Record<string, unknown>>({
               ) : (
                 <TextField
                   {...commonTextFieldProps}
-                  InputLabelProps={field.type === "date" ? { shrink: true } : {}}
                   multiline={field.type === "textarea"}
                   rows={field.type === "textarea" ? field.rows ?? 3 : undefined}
+                  slotProps={field.type === "date" ? { inputLabel: { shrink: true } } : undefined}
                   type={
                     field.type === "textarea"
                       ? undefined

@@ -30,6 +30,11 @@ const monthLookup = new Map<string, number>([
 
 function parsePatientDate(displayDate: string) {
   const [dayPart, monthPart, yearPart] = displayDate.split(" ");
+
+  if (!dayPart || !monthPart || !yearPart) {
+    return 0;
+  }
+
   const monthIndex = monthLookup.get(monthPart.toLowerCase());
 
   if (monthIndex === undefined) {
@@ -121,28 +126,25 @@ const patientColumns: GenericTableColumn<Patient>[] = [
     minWidth: 150,
     sortAccessor: (patient) => parsePatientDate(patient.lastVisitDate),
     sortable: true,
-    render: (patient) => patient.lastVisitDate,
+    render: (patient) => patient.lastVisitDate || "Not available",
   },
 ];
 
 type PatientListPageProps = {
   onAddNewPatient: () => void;
+  onAddVisit: (patient: Patient) => void;
+  onEditPatient: (patient: Patient) => void;
+  onViewPatient: (patient: Patient) => void;
   patients: Patient[];
 };
 
-export function PatientListPage({ onAddNewPatient, patients }: PatientListPageProps) {
-  const handleViewPatient = (patient: Patient) => {
-    window.alert(`View details for ${patient.name}`);
-  };
-
-  const handleEditPatient = (patient: Patient) => {
-    window.alert(`Edit details for ${patient.name}`);
-  };
-
-  const handleAddVisit = (patient: Patient) => {
-    window.alert(`Add a new visit for ${patient.name}`);
-  };
-
+export function PatientListPage({
+  onAddNewPatient,
+  onAddVisit,
+  onEditPatient,
+  onViewPatient,
+  patients,
+}: PatientListPageProps) {
   return (
     <Stack spacing={3}>
       <Box
@@ -181,8 +183,6 @@ export function PatientListPage({ onAddNewPatient, patients }: PatientListPagePr
         data={patients}
         emptyMessage="No patients match your search."
         getRowKey={(patient) => patient.id}
-        initialSortColumnId="id"
-        initialSortDirection="asc"
         initialRowsPerPage={5}
         pagination
         renderActions={(patient) => (
@@ -191,7 +191,7 @@ export function PatientListPage({ onAddNewPatient, patients }: PatientListPagePr
               <IconButton
                 aria-label={`View details for ${patient.name}`}
                 color="primary"
-                onClick={() => handleViewPatient(patient)}
+                onClick={() => onViewPatient(patient)}
                 size="small"
               >
                 <VisibilityRoundedIcon fontSize="small" />
@@ -201,7 +201,7 @@ export function PatientListPage({ onAddNewPatient, patients }: PatientListPagePr
               <IconButton
                 aria-label={`Edit details for ${patient.name}`}
                 color="primary"
-                onClick={() => handleEditPatient(patient)}
+                onClick={() => onEditPatient(patient)}
                 size="small"
               >
                 <EditRoundedIcon fontSize="small" />
@@ -211,7 +211,7 @@ export function PatientListPage({ onAddNewPatient, patients }: PatientListPagePr
               <IconButton
                 aria-label={`Add a new visit for ${patient.name}`}
                 color="primary"
-                onClick={() => handleAddVisit(patient)}
+                onClick={() => onAddVisit(patient)}
                 size="small"
               >
                 <AddCircleOutlineRoundedIcon fontSize="small" />

@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from "react";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import {
   Box,
+  Button,
   Stack,
   Typography,
 } from "@mui/material";
@@ -9,6 +11,9 @@ import type { PatientFormValues } from "./patientMockData";
 
 type AddPatientPageProps = {
   existingPatientIds: string[];
+  initialValues?: PatientFormValues;
+  mode?: "add" | "edit";
+  onBack: () => void;
   onCancel: () => void;
   onSave: (values: PatientFormValues) => void;
   suggestedPatientId: string;
@@ -37,7 +42,7 @@ const addPatientFields: GenericFormField<PatientFormValues>[] = [
   {
     label: "Date of Birth",
     name: "dateOfBirth",
-    required: true,
+    required: false,
     type: "date",
   },
   {
@@ -60,14 +65,14 @@ const addPatientFields: GenericFormField<PatientFormValues>[] = [
   {
     label: "Email",
     name: "email",
-    required: true,
+    required: false,
     placeholder: "patient@example.com",
     type: "email",
   },
   {
     label: "Address",
     name: "address",
-    required: true,
+    required: false,
     rows: 3,
     span: 2,
     type: "textarea",
@@ -77,13 +82,30 @@ const addPatientFields: GenericFormField<PatientFormValues>[] = [
     helperText: "PDF, PNG, JPG, DOC, or DOCX files only.",
     label: "Upload Report",
     name: "reportFile",
+    required: false,
     span: 2,
     type: "file",
   },
   {
     label: "Medicines",
     name: "medicines",
-    required: true,
+    required: false,
+    rows: 3,
+    span: 2,
+    type: "textarea",
+  },
+  {
+    label: "Past Medical History",
+    name: "pastMedicalHistory",
+    placeholder: "Enter relevant past diagnoses, procedures, allergies, or conditions",
+    rows: 3,
+    span: 2,
+    type: "textarea",
+  },
+  {
+    label: "Family History",
+    name: "familyHistory",
+    placeholder: "Enter relevant family medical history",
     rows: 3,
     span: 2,
     type: "textarea",
@@ -96,9 +118,11 @@ function createInitialValues(suggestedPatientId: string): PatientFormValues {
     age: "",
     dateOfBirth: "",
     email: "",
+    familyHistory: "",
     gender: "",
     medicines: "",
     mobileNumber: "",
+    pastMedicalHistory: "",
     patientId: suggestedPatientId,
     patientName: "",
     reportFile: null,
@@ -127,9 +151,7 @@ function validate(values: PatientFormValues, existingPatientIds: string[]) {
     errors.age = "Enter a valid age.";
   }
 
-  if (!values.dateOfBirth) {
-    errors.dateOfBirth = "Date of birth is required.";
-  } else {
+  if (values.dateOfBirth) {
     const dateOfBirth = new Date(`${values.dateOfBirth}T00:00:00`);
     if (Number.isNaN(dateOfBirth.getTime())) {
       errors.dateOfBirth = "Enter a valid date of birth.";
@@ -144,18 +166,8 @@ function validate(values: PatientFormValues, existingPatientIds: string[]) {
     errors.mobileNumber = "Enter a valid mobile number.";
   }
 
-  if (!values.email.trim()) {
-    errors.email = "Email is required.";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
+  if (values.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
     errors.email = "Enter a valid email address.";
-  }
-
-  if (!values.address.trim()) {
-    errors.address = "Address is required.";
-  }
-
-  if (!values.medicines.trim()) {
-    errors.medicines = "Medicines are required.";
   }
 
   if (!values.gender.trim()) {
@@ -167,14 +179,18 @@ function validate(values: PatientFormValues, existingPatientIds: string[]) {
 
 export function AddPatientPage({
   existingPatientIds,
+  initialValues,
+  mode = "add",
+  onBack,
   onCancel,
   onSave,
   suggestedPatientId,
 }: AddPatientPageProps) {
   const [values, setValues] = useState<PatientFormValues>(() =>
-    createInitialValues(suggestedPatientId),
+    initialValues ?? createInitialValues(suggestedPatientId),
   );
   const [errors, setErrors] = useState<Partial<Record<keyof PatientFormValues, string>>>({});
+  const isEditing = mode === "edit";
 
   const handleChange = <K extends keyof PatientFormValues>(name: K, value: PatientFormValues[K]) => {
     setValues((currentValues) => ({
@@ -202,13 +218,37 @@ export function AddPatientPage({
 
   return (
     <Stack spacing={3}>
-      <Box>
-        <Typography component="h2" variant="h4">
-          Add Patient
-        </Typography>
-        <Typography color="text.secondary" sx={{ mt: 0.75 }}>
-          Create a new patient profile and keep the list updated immediately.
-        </Typography>
+      <Box
+        sx={{
+          alignItems: { xs: "stretch", sm: "flex-start" },
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          gap: 2,
+          justifyContent: "space-between",
+        }}
+      >
+        <Box>
+          <Typography component="h2" variant="h4">
+            {isEditing ? "Edit Patient" : "Add Patient"}
+          </Typography>
+          <Typography color="text.secondary" sx={{ mt: 0.75 }}>
+            {isEditing
+              ? "Update the patient profile and save the latest information."
+              : "Create a new patient profile and keep the list updated immediately."}
+          </Typography>
+        </Box>
+
+        <Button
+          onClick={onBack}
+          startIcon={<ArrowBackRoundedIcon />}
+          variant="outlined"
+          sx={{
+            alignSelf: { xs: "stretch", sm: "flex-start" },
+            minWidth: 120,
+          }}
+        >
+          Back
+        </Button>
       </Box>
 
       <GenericForm
@@ -217,9 +257,9 @@ export function AddPatientPage({
         onCancel={onCancel}
         onChange={handleChange}
         onSubmit={handleSubmit}
-        submitLabel="Save Patient"
+        submitLabel={isEditing ? "Save Changes" : "Save Patient"}
         subtitle="Fields marked with an asterisk are required."
-        title="Patient Details"
+        title={isEditing ? "Edit Patient Details" : "Patient Details"}
         values={values}
         errors={errors}
       />
