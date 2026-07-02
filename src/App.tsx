@@ -226,7 +226,11 @@ function App() {
   return (
     <ThemeProvider theme={appTheme}>
       <CssBaseline />
-      <AppShell onNavigate={handleNavigate} selectedPage={activeNavigationPage}>
+      <AppShell
+        onNavigate={handleNavigate}
+        pageTransitionKey={`${selectedPage}-${editingPatientId ?? viewingPatientId ?? visitPatientId ?? ""}`}
+        selectedPage={activeNavigationPage}
+      >
         {pageContent}
       </AppShell>
     </ThemeProvider>

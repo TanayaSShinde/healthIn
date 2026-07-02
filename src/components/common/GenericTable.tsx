@@ -15,7 +15,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { alpha } from "@mui/material/styles";
+import { alpha, keyframes } from "@mui/material/styles";
+import { entranceSx, reducedMotionQuery, scaleEntranceSx } from "../../theme/animations";
 
 export type GenericTableColumn<T> = {
   id: string;
@@ -58,6 +59,17 @@ const collator = new Intl.Collator(undefined, {
   numeric: true,
   sensitivity: "base",
 });
+
+const fadeRowIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 function toFilterText(value: string | number | Date | null | undefined) {
   if (value === null || value === undefined) {
@@ -232,12 +244,15 @@ export function GenericTable<T>({
   return (
     <TableContainer
       component={Paper}
-      sx={{
-        border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
-        borderRadius: 2,
-        boxShadow: "0 12px 30px rgba(13, 71, 161, 0.08)",
-        overflowX: "auto",
-      }}
+      sx={[
+        {
+          border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+          borderRadius: 2,
+          boxShadow: "0 12px 30px rgba(13, 71, 161, 0.08)",
+          overflowX: "auto",
+        },
+        entranceSx(80),
+      ]}
     >
       <Table
         sx={{
@@ -364,11 +379,24 @@ export function GenericTable<T>({
               <TableRow
                 hover
                 key={getRowKey(row)}
-                sx={{
-                  "& td": {
-                    py: 1.75,
+                sx={[
+                  {
+                    animation: `${fadeRowIn} 320ms ease both`,
+                    animationDelay: `${Math.min(rowIndex * 35, 280)}ms`,
+                    transition: "background-color 160ms ease, box-shadow 160ms ease",
+                    [reducedMotionQuery]: {
+                      animation: "none",
+                      transition: "none",
+                    },
+                    "& td": {
+                      py: 1.75,
+                    },
+                    "&:hover": {
+                      bgcolor: "rgba(227, 242, 253, 0.38)",
+                      boxShadow: "inset 3px 0 0 rgba(21, 101, 192, 0.38)",
+                    },
                   },
-                }}
+                ]}
               >
                 {showSerialNumber ? (
                   <TableCell align="center" sx={{ color: "text.secondary", fontWeight: 700 }}>
@@ -388,7 +416,7 @@ export function GenericTable<T>({
           ) : (
             <TableRow>
               <TableCell colSpan={columnCount}>
-                <Box sx={{ py: 5, textAlign: "center" }}>
+                <Box sx={[{ py: 5, textAlign: "center" }, scaleEntranceSx(80)]}>
                   <Typography color="text.secondary">{emptyMessage}</Typography>
                 </Box>
               </TableCell>

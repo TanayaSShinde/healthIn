@@ -8,6 +8,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { healthPulse, reducedMotionQuery } from "../../theme/animations";
 
 type TopNavbarProps = {
   onMenuClick: () => void;
@@ -45,6 +46,7 @@ export function TopNavbar({ onMenuClick }: TopNavbarProps) {
             aria-hidden="true"
             sx={{
               alignItems: "center",
+              animation: `${healthPulse} 2600ms ease-in-out infinite`,
               bgcolor: "rgba(255, 255, 255, 0.18)",
               border: "1px solid rgba(255, 255, 255, 0.28)",
               borderRadius: 2,
@@ -52,6 +54,9 @@ export function TopNavbar({ onMenuClick }: TopNavbarProps) {
               height: 40,
               justifyContent: "center",
               width: 40,
+              [reducedMotionQuery]: {
+                animation: "none",
+              },
             }}
           >
             <Typography component="span" sx={{ fontWeight: 800 }}>

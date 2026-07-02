@@ -11,23 +11,25 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { AnimatedNumber } from "../../components/common/AnimatedNumber";
+import { ecgTrace, entranceSx, healthPulse, hoverLiftSx, reducedMotionQuery } from "../../theme/animations";
 
 const statCards = [
   {
     label: "Active Patients",
-    value: "1,248",
+    value: 1248,
     helper: "126 added this month",
     icon: LocalHospitalRoundedIcon,
   },
   {
     label: "Pending Followups",
-    value: "84",
+    value: 84,
     helper: "18 due today",
     icon: AccessTimeRoundedIcon,
   },
   {
     label: "Completed Visits",
-    value: "318",
+    value: 318,
     helper: "This week",
     icon: CheckCircleRoundedIcon,
   },
@@ -57,13 +59,53 @@ const appointments = [
 export function DashboardHome() {
   return (
     <Stack spacing={3}>
-      <Box>
-        <Typography component="h2" variant="h4">
-          Dashboard
-        </Typography>
-        <Typography color="text.secondary" sx={{ mt: 0.75 }}>
-          Track patient care, followups, and clinic activity from one clean workspace.
-        </Typography>
+      <Box
+        sx={{
+          alignItems: { xs: "flex-start", md: "center" },
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          gap: 2,
+          justifyContent: "space-between",
+        }}
+      >
+        <Box>
+          <Typography component="h2" variant="h4">
+            Dashboard
+          </Typography>
+          <Typography color="text.secondary" sx={{ mt: 0.75 }}>
+            Track patient care, followups, and clinic activity from one clean workspace.
+          </Typography>
+        </Box>
+        <Box
+          aria-hidden="true"
+          component="svg"
+          viewBox="0 0 180 42"
+          sx={{
+            color: "primary.main",
+            height: 42,
+            maxWidth: 180,
+            opacity: 0.75,
+            width: { xs: 150, sm: 180 },
+            "& path": {
+              animation: `${ecgTrace} 1400ms ease-out both`,
+              strokeDasharray: 120,
+              strokeDashoffset: 120,
+              [reducedMotionQuery]: {
+                animation: "none",
+                strokeDashoffset: 0,
+              },
+            },
+          }}
+        >
+          <path
+            d="M4 24 H34 L43 24 L50 9 L62 35 L74 16 L84 24 H112 L120 24 L127 15 L139 29 L148 24 H176"
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="3"
+          />
+        </Box>
       </Box>
 
       <Box
@@ -77,12 +119,12 @@ export function DashboardHome() {
           },
         }}
       >
-        {statCards.map((card) => {
+        {statCards.map((card, cardIndex) => {
           const Icon = card.icon;
 
           return (
-            <Box key={card.label}>
-              <Card>
+            <Box key={card.label} sx={entranceSx(cardIndex * 80)}>
+              <Card sx={hoverLiftSx}>
                 <CardContent>
                   <Stack
                     direction="row"
@@ -93,12 +135,13 @@ export function DashboardHome() {
                         {card.label}
                       </Typography>
                       <Typography sx={{ mt: 1 }} variant="h4">
-                        {card.value}
+                        <AnimatedNumber value={card.value} />
                       </Typography>
                     </Box>
                     <Box
                       sx={{
                         alignItems: "center",
+                        animation: `${healthPulse} 2200ms ease-in-out infinite`,
                         bgcolor: "#e3f2fd",
                         borderRadius: 2,
                         color: "primary.main",
@@ -106,6 +149,9 @@ export function DashboardHome() {
                         height: 44,
                         justifyContent: "center",
                         width: 44,
+                        [reducedMotionQuery]: {
+                          animation: "none",
+                        },
                       }}
                     >
                       <Icon />
@@ -128,8 +174,8 @@ export function DashboardHome() {
           gridTemplateColumns: { xs: "1fr", md: "minmax(0, 2fr) minmax(320px, 1fr)" },
         }}
       >
-        <Box>
-          <Card sx={{ height: "100%" }}>
+        <Box sx={entranceSx(260)}>
+          <Card sx={[{ height: "100%" }, hoverLiftSx]}>
             <CardContent>
               <Stack
                 direction={{ xs: "column", sm: "row" }}
@@ -149,20 +195,24 @@ export function DashboardHome() {
               </Stack>
 
               <Stack spacing={1.5} sx={{ mt: 3 }}>
-                {appointments.map((appointment) => (
+                {appointments.map((appointment, appointmentIndex) => (
                   <Box
                     key={`${appointment.patient}-${appointment.time}`}
-                    sx={{
-                      alignItems: { xs: "flex-start", sm: "center" },
-                      bgcolor: "#f7fbff",
-                      border: "1px solid rgba(21, 101, 192, 0.1)",
-                      borderRadius: 2,
-                      display: "flex",
-                      flexDirection: { xs: "column", sm: "row" },
-                      gap: 1.5,
-                      justifyContent: "space-between",
-                      p: 2,
-                    }}
+                    sx={[
+                      {
+                        alignItems: { xs: "flex-start", sm: "center" },
+                        bgcolor: "#f7fbff",
+                        border: "1px solid rgba(21, 101, 192, 0.1)",
+                        borderRadius: 2,
+                        display: "flex",
+                        flexDirection: { xs: "column", sm: "row" },
+                        gap: 1.5,
+                        justifyContent: "space-between",
+                        p: 2,
+                      },
+                      hoverLiftSx,
+                      entranceSx(340 + appointmentIndex * 70),
+                    ]}
                   >
                     <Box>
                       <Typography sx={{ fontWeight: 800 }}>{appointment.patient}</Typography>
@@ -183,8 +233,8 @@ export function DashboardHome() {
           </Card>
         </Box>
 
-        <Box>
-          <Card sx={{ height: "100%" }}>
+        <Box sx={entranceSx(320)}>
+          <Card sx={[{ height: "100%" }, hoverLiftSx]}>
             <CardContent>
               <Typography variant="h6">Followup Progress</Typography>
               <Typography color="text.secondary" sx={{ mt: 0.75 }} variant="body2">
@@ -218,9 +268,13 @@ export function DashboardHome() {
 
                 <Box
                   sx={{
+                    animation: `${healthPulse} 2600ms ease-in-out infinite`,
                     bgcolor: "#eaf4ff",
                     borderRadius: 2,
                     p: 2,
+                    [reducedMotionQuery]: {
+                      animation: "none",
+                    },
                   }}
                 >
                   <Typography color="primary.dark" sx={{ fontWeight: 800 }}>

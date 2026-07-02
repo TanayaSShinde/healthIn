@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { GenericTable, type GenericTableColumn } from "../../components/common/GenericTable";
+import { entranceSx, scaleEntranceSx } from "../../theme/animations";
 import type { Patient } from "./patientMockData";
 
 const monthLookup = new Map<string, number>([
@@ -148,13 +149,16 @@ export function PatientListPage({
   return (
     <Stack spacing={3}>
       <Box
-        sx={{
-          alignItems: { xs: "stretch", sm: "flex-start" },
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          gap: 2,
-          justifyContent: "space-between",
-        }}
+        sx={[
+          {
+            alignItems: { xs: "stretch", sm: "flex-start" },
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+            justifyContent: "space-between",
+          },
+          entranceSx(40),
+        ]}
       >
         <Box>
           <Typography component="h2" variant="h4">
@@ -169,10 +173,13 @@ export function PatientListPage({
           onClick={onAddNewPatient}
           startIcon={<AddCircleOutlineRoundedIcon />}
           variant="contained"
-          sx={{
-            alignSelf: { xs: "stretch", sm: "flex-start" },
-            minWidth: 180,
-          }}
+          sx={[
+            {
+              alignSelf: { xs: "stretch", sm: "flex-start" },
+              minWidth: 180,
+            },
+            scaleEntranceSx(120),
+          ]}
         >
           Add New Patient
         </Button>

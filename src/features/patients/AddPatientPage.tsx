@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { GenericForm, type GenericFormField } from "../../components/common/GenericForm";
+import { entranceSx } from "../../theme/animations";
 import type { PatientFormValues } from "./patientMockData";
 
 type AddPatientPageProps = {
@@ -219,13 +220,16 @@ export function AddPatientPage({
   return (
     <Stack spacing={3}>
       <Box
-        sx={{
-          alignItems: { xs: "stretch", sm: "flex-start" },
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          gap: 2,
-          justifyContent: "space-between",
-        }}
+        sx={[
+          {
+            alignItems: { xs: "stretch", sm: "flex-start" },
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+            justifyContent: "space-between",
+          },
+          entranceSx(40),
+        ]}
       >
         <Box>
           <Typography component="h2" variant="h4">

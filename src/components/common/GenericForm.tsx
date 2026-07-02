@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { entranceSx, hoverLiftSx } from "../../theme/animations";
 
 export type GenericFormFieldOption = {
   label: string;
@@ -72,12 +73,16 @@ export function GenericForm<TValues extends Record<string, unknown>>({
     <Paper
       component="form"
       onSubmit={onSubmit}
-      sx={{
-        border: "1px solid rgba(21, 101, 192, 0.12)",
-        borderRadius: 2,
-        boxShadow: "0 12px 30px rgba(13, 71, 161, 0.08)",
-        p: { xs: 2, md: 3 },
-      }}
+      sx={[
+        {
+          border: "1px solid rgba(21, 101, 192, 0.12)",
+          borderRadius: 2,
+          boxShadow: "0 12px 30px rgba(13, 71, 161, 0.08)",
+          p: { xs: 2, md: 3 },
+        },
+        hoverLiftSx,
+        entranceSx(70),
+      ]}
       noValidate
     >
       <Stack spacing={0.75}>
@@ -101,7 +106,7 @@ export function GenericForm<TValues extends Record<string, unknown>>({
           mt: 3,
         }}
       >
-        {fields.map((field) => {
+        {fields.map((field, fieldIndex) => {
           const fieldId = `${formId}-${String(field.name)}`;
           const fieldValue = values[field.name];
           const fieldError = errors?.[field.name];
@@ -114,9 +119,12 @@ export function GenericForm<TValues extends Record<string, unknown>>({
             return (
               <Box
                 key={fieldId}
-                sx={{
-                  gridColumn: isFullWidth ? { md: "1 / -1" } : undefined,
-                }}
+                sx={[
+                  {
+                    gridColumn: isFullWidth ? { md: "1 / -1" } : undefined,
+                  },
+                  entranceSx(120 + fieldIndex * 28),
+                ]}
               >
                 <Stack spacing={1}>
                   <Typography sx={{ fontWeight: 700 }}>
@@ -205,9 +213,12 @@ export function GenericForm<TValues extends Record<string, unknown>>({
           return (
             <Box
               key={fieldId}
-              sx={{
-                gridColumn: isFullWidth ? { md: "1 / -1" } : undefined,
-              }}
+              sx={[
+                {
+                  gridColumn: isFullWidth ? { md: "1 / -1" } : undefined,
+                },
+                entranceSx(120 + fieldIndex * 28),
+              ]}
             >
               {field.type === "select" ? (
                 <TextField select {...commonTextFieldProps}>

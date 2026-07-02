@@ -3,14 +3,16 @@ import { Box, Container, Toolbar } from "@mui/material";
 import { Sidebar, drawerWidth } from "./Sidebar";
 import { TopNavbar } from "./TopNavbar";
 import type { PageId } from "../../shared/navigation";
+import { entranceSx } from "../../theme/animations";
 
 type AppShellProps = {
   children: ReactNode;
   onNavigate: (pageId: PageId) => void;
+  pageTransitionKey?: string;
   selectedPage: PageId;
 };
 
-export function AppShell({ children, onNavigate, selectedPage }: AppShellProps) {
+export function AppShell({ children, onNavigate, pageTransitionKey, selectedPage }: AppShellProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleNavigate = (pageId: PageId) => {
@@ -38,7 +40,9 @@ export function AppShell({ children, onNavigate, selectedPage }: AppShellProps) 
       >
         <Toolbar sx={{ minHeight: { xs: 64, md: 72 } }} />
         <Container maxWidth="xl" sx={{ py: { xs: 2.5, md: 4 } }}>
-          {children}
+          <Box key={pageTransitionKey ?? selectedPage} sx={entranceSx(0, 360)}>
+            {children}
+          </Box>
         </Container>
       </Box>
     </Box>
