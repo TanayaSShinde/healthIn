@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { AppShell } from "./components/layout/AppShell";
+import { Login } from "./components/Login/Login";
 import { DashboardHome } from "./features/dashboard/DashboardHome";
 import { AddPatientPage } from "./features/patients/AddPatientPage";
 import { AddVisitPage } from "./features/patients/AddVisitPage";
@@ -20,6 +21,7 @@ type AppPageId = PageId | "add-patient" | "edit-patient" | "view-patient" | "add
 
 function App() {
   const [selectedPage, setSelectedPage] = useState<AppPageId>("dashboard");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [patientFormReturnPage, setPatientFormReturnPage] = useState<PageId>("patients");
   const [visitFormReturnPage, setVisitFormReturnPage] = useState<AppPageId>("patients");
   const [editingPatientId, setEditingPatientId] = useState<string | null>(null);
@@ -29,9 +31,9 @@ function App() {
 
   const activeNavigationPage: PageId =
     selectedPage === "add-patient" ||
-    selectedPage === "edit-patient" ||
-    selectedPage === "view-patient" ||
-    selectedPage === "add-visit"
+      selectedPage === "edit-patient" ||
+      selectedPage === "view-patient" ||
+      selectedPage === "add-visit"
       ? "patients"
       : selectedPage;
   const editingPatient = patients.find((patient) => patient.id === editingPatientId);
@@ -120,6 +122,20 @@ function App() {
     setVisitPatientId(null);
     setSelectedPage("view-patient");
   };
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+    setSelectedPage("dashboard");
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <ThemeProvider theme={appTheme}>
+        <CssBaseline />
+        <Login onLogin={handleLogin} />
+      </ThemeProvider>
+    );
+  }
 
   const pageContent = (() => {
     switch (selectedPage) {
